@@ -2,14 +2,53 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>Network Monitor</title>
+    <link rel="stylesheet" type="text/css" href="resources/css/main.css">
+    <!--including photon from node_modules # sudo npp install photonkit --save     -->
+    <link rel="stylesheet" href="node_modules/photonkit/dist/css/photon.css">
+
+    <script src=""></script>
+
+    <script>
+      //including jquery from node_modules # sudo npp install jquery --save
+      window.$ = window.jQuery = require('jquery');
+      //accessing node modules from "rendering" code to create console that outputs on terminal
+      var nodeConsole = require('console');
+      var myConsole = new nodeConsole.Console(process.stdout, process.stderr);
+      myConsole.log('App started');
+    </script>
+    <script src="fileLoader.js"></script>
+    <script src="main_client.js"></script>
   </head>
   <body>
-    <h1>Hello World!</h1>
-    <!-- All of the Node.js APIs are available in this renderer process. -->
-    We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
+    <header class="toolbar toolbar-header">
+      <h1 class="title">Header the tabs</h1>
+    </header>
+
+    <div class="tab-group">
+      <div class="tab-item">
+        <span class="icon icon-cancel icon-close-tab"></span>
+        Tab
+      </div>
+      <div class="tab-item active">
+        <span class="icon icon-cancel icon-close-tab"></span>
+        TEST PHOTON
+      </div>
+      <div class="tab-item">
+        <span class="icon icon-cancel icon-close-tab"></span>
+        Tab
+      </div>
+      <div class="tab-item tab-item-fixed">
+        <span class="icon icon-plus"></span>
+      </div>
+    </div>
+  <h1>Network Monitor</h1>
+  <h2>Welcome!</h2>
+  <p>
+    This is an application made for analyzing network data.
+  </p>
+    <input id="inputFile" value="Browse file" type="file"/>
+
   </body>
 
   <script>
