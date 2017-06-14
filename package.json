@@ -1,0 +1,22 @@
+{
+  "name": "NetworkMonitor",
+  "version": "1.0.0",
+  "description": "A network monitoring application for Internet Security",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/TopHatCroat/NetworkMonitor",
+  "keywords": [
+    "network",
+    "monitor",
+    "si",
+    "security",
+    "internet"
+  ],
+  "author": "Tomislav Čivčija, Antonio Martinović",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "~1.6.2"
+  }
+}
