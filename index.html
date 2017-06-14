@@ -18,6 +18,7 @@
       myConsole.log('App started');
     </script>
     <script src="fileLoader.js"></script>
+    <script src="utils.js"></script>
     <script src="main_client.js"></script>
   </head>
   <body>
@@ -47,7 +48,35 @@
   <p>
     This is an application made for analyzing network data.
   </p>
-    <input id="inputFile" value="Browse file" type="file"/>
+
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <input id="inputFile" value="Browse file" type="file"/>
+          </td>
+          <td></td>
+        </tr>
+
+        <tr>
+          <td id="ipListOutput"></td>
+          <td>
+            <button id="loadIpListBtn" >Load</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <button id="shodanBtn" >Shodan</button>
+          </td>
+          <td>
+            <textarea id="shodanOutput" ></textarea>
+          </td>
+        </tr>
+
+      </tbody>
+
+    </table>
 
   </body>
 
