@@ -7,6 +7,7 @@ var pcapp = require('pcap-parser');
 
 var ipSet = new StringSet();
 
+
 const searchOpts = {};
 
 $(document).ready(function(){
@@ -23,6 +24,22 @@ $(document).ready(function(){
                 ipSet.add(data.sourceIP);
                 ipSet.add(data.destinationIP);
             }
+        });
+    });
+
+    $("#chechIpBtn").click(function(event){
+        $.getJSON( "https://api.ipify.org?format=json", function( ipResult ) {
+
+            $.getJSON( "http://ip-api.com/json/" + ipResult.ip, function( infoResult ) {
+                $("#infoLocation").text(infoResult.city + ", " + infoResult.country + ", " + infoResult.countryCode);
+                $("#infoIsp").text(infoResult.isp);
+                $("#mainInfoOutput").css("display", "block");
+            });
+
+            $( "<p/>", {
+                "class": "ip-view",
+                html: ipResult.ip
+            }).appendTo( "#checkIpOutput" );
         });
     });
 
