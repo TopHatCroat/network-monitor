@@ -18,6 +18,8 @@
       myConsole.log('App started');
     </script>
     <script src="fileLoader.js"></script>
+    <script src="chart.js"></script>
+    <script src="libs/chart.min.js"></script>
     <script src="utils.js"></script>
     <script src="main_client.js"></script>
   </head>
@@ -79,6 +81,16 @@
           <td id="ipListOutput"></td>
           <td>
             <button id="loadIpListBtn" >Load</button>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <button id="analyzePcapBtn">Analyize data</button>
+
+          </td>
+          <td>
+            <canvas id="chartCanvas" style="display: block; width: 400px; height: 300px;" width="400" height="300"></canvas>
           </td>
         </tr>
 

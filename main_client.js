@@ -6,6 +6,8 @@ var shodan = require('shodan-client');
 var pcapp = require('pcap-parser');
 
 var ipSet = new StringSet();
+var pcapData = [];
+var analyisis = {};
 
 
 const searchOpts = {};
@@ -23,8 +25,28 @@ $(document).ready(function(){
             if(data != null) {
                 ipSet.add(data.sourceIP);
                 ipSet.add(data.destinationIP);
+                pcapData.push(data)
             }
         });
+    });
+
+    $("#analyzePcapBtn").click(function(event) {
+
+        var ipFrequency = [];
+        var portFrequency = [];
+
+        analyisis = {}
+
+        $.each(pcapData, function(key, val) {
+            upTick(ipFrequency, val.sourceIP)
+            upTick(portFrequency, val.sourcePort)
+        });
+
+        analyisis["ipFreq"] = ipFrequency;
+        analyisis["portFreq"] = portFrequency;
+
+        createChart($("#chartCanvas")[0].getContext('2d'), "IP", analyisis["ipFreq"])
+
     });
 
     $("#chechIpBtn").click(function(event){
@@ -42,6 +64,7 @@ $(document).ready(function(){
             }).appendTo( "#checkIpOutput" );
         });
     });
+
 
     $("#loadIpListBtn").click(function(event){
         var out = $("#loadIpListBtn");
@@ -66,38 +89,3 @@ $(document).ready(function(){
 
     });
 });
-
-function parsePcapData(buffer) {
-    if (buffer.length <= 0x35) {
-        return null;
-    }
-
-    // Is it TCP Version 4?
-    if (buffer.readUInt8(14) != 0x45) {
-        return null;
-    }
-
-    // Read Source IP
-    var sourceIP = buffer.readUInt8(0x1A).toString() + '.' +
-        buffer.readUInt8(0x1B).toString() + '.' +
-        buffer.readUInt8(0x1C).toString() + '.' +
-        buffer.readUInt8(0x1D).toString();
-
-    var destinationIP = buffer.readUInt8(0x1E).toString() + '.' +
-        buffer.readUInt8(0x1F).toString() + '.' +
-        buffer.readUInt8(0x20).toString() + '.' +
-        buffer.readUInt8(0x21).toString();
-
-    var sourcePort = buffer.readUInt16BE(0x22);
-    var destinationPort = buffer.readUInt16BE(0x24);
-
-    var data = buffer.slice(0x36);
-
-    return {
-        sourceIP: sourceIP,
-        destinationIP: destinationIP,
-        sourcePort: sourcePort,
-        destinationPort: destinationPort,
-        data: data
-    }
-}
