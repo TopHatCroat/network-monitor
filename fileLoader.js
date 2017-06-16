@@ -42,6 +42,7 @@ function readHistory(){
 }
 var fs = require('fs');
 var fp= 'resources/history/h.dat';
+
 function writeHistory(filePath, fileSize, processingTime, securityProblems){
 	prepareFile();
 	var id = ""+filePath+fileSize+processingTime+securityProblems+ new Date().toLocaleString();

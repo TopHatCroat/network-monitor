@@ -27,8 +27,28 @@ function inputFileChangeHandler(path){
     });
 }
 
+function loadIpInfo() {
+    $.getJSON( "https://api.ipify.org?format=json", function( ipResult ) {
+
+        $.getJSON( "http://ip-api.com/json/" + ipResult.ip, function( infoResult ) {
+            $("#infoLocation").text(infoResult.city + ", " + infoResult.country + ", " + infoResult.countryCode);
+            $("#infoIsp").text(infoResult.isp);
+            $("#mainInfoOutput").css("display", "block");
+        });
+
+        $( "<p/>", {
+            "class": "ip-view",
+            html: ipResult.ip
+        }).appendTo( "#checkIpOutput" );
+    });
+}
+
 $(document).ready(function(){
-    readHistory();
+
+    // readHistory();
+
+    // loadIpInfo();
+
     $("#div-history").mouseleave(function(event){
         $("#div-history-description").empty();
     });
@@ -48,66 +68,71 @@ $(document).ready(function(){
         myConsole.log(event.target.files[0].path);
     });
 
-
-    $("#analyzePcapBtn").click(function(event) {
-
-        var ipFrequency = [];
-        var portFrequency = [];
-
-        analyisis = {}
-
-        $.each(pcapData, function(key, val) {
-            upTick(ipFrequency, val.sourceIP)
-            upTick(portFrequency, val.sourcePort)
-        });
-
-        analyisis["ipFreq"] = ipFrequency;
-        analyisis["portFreq"] = portFrequency;
-
-        createChart($("#chartCanvas")[0].getContext('2d'), "IP", analyisis["ipFreq"])
-
+    $("#sourceIpGraphBtn").click(function(event) {
+        $("chartCanvas").empty();
+        generateChartOutput("srcIp");
     });
-
-    $("#chechIpBtn").click(function(event){
-        $.getJSON( "https://api.ipify.org?format=json", function( ipResult ) {
-
-            $.getJSON( "http://ip-api.com/json/" + ipResult.ip, function( infoResult ) {
-                $("#infoLocation").text(infoResult.city + ", " + infoResult.country + ", " + infoResult.countryCode);
-                $("#infoIsp").text(infoResult.isp);
-                $("#mainInfoOutput").css("display", "block");
-            });
-
-            $( "<p/>", {
-                "class": "ip-view",
-                html: ipResult.ip
-            }).appendTo( "#checkIpOutput" );
-        });
+    $("#destinationIpGraphBtn").click(function(event) {
+        $("chartCanvas").empty();
+        generateChartOutput("destIp");
+    });
+    $("#sourcePortGraphBtn").click(function(event) {
+        $("chartCanvas").empty();
+        generateChartOutput("srcPort");
+    });
+    $("#destinationPortGraphBtn").click(function(event) {
+        $("chartCanvas").empty();
+        generateChartOutput("destPort");
     });
 
     $("#loadIpListBtn").click(function(event){
-        var out = $("#loadIpListBtn");
+        var out = $("#ipListOutput");
         out.empty();
         ipSet.remove("0.0.0.0");
         ipSet.remove("255.255.255.255");
-        out.append(makeHtmlList(ipSet.values()))
+        out.append(makeIpTable(ipSet))
+    });
+});
+
+function generateChartOutput(type) {
+    var ipFrequency = [];
+    var portFrequency = [];
+    var ipDstFrequency = [];
+    var portDstFrequency = [];
+
+    analyisis = {};
+
+    $.each(pcapData, function(key, val) {
+        upTick(ipFrequency, val.sourceIP);
+        upTick(ipDstFrequency, val.destinationIP);
+        upTick(portFrequency, val.sourcePort);
+        upTick(portDstFrequency, val.destinationPort);
     });
 
-    $("#shodanBtn").click(function(event){
-        ipSet.values().forEach(function(item) {
-            shodan.host(item, 'kpIpMqmM9dG3FdBj2QC2ks3cSK1KlRiW', searchOpts)
-                .then(function(res) {
-                    console.log('Result:');
-                    console.log(res);
-                    myConsole.log('Result:');
-                    myConsole.log(res);
-                })
-                })
-                .catch(function(err) {
-                    myConsole.log('Error:');
-                    myConsole.log(err);
-                });
-        });
-});
+    analyisis["ipFreq"] = ipFrequency;
+    analyisis["ipDstFreq"] = ipDstFrequency;
+    analyisis["portFreq"] = portFrequency;
+    analyisis["portDstFreq"] = portDstFrequency;
+
+    switch(type) {
+        case "destIp": {
+            createChart($("#chartCanvas")[0].getContext('2d'), "IP", analyisis["ipDstFreq"])
+            break;
+        }
+        case "srcIp": {
+            createChart($("#chartCanvas")[0].getContext('2d'), "IP", analyisis["ipFreq"])
+            break;
+        }
+        case "destPort": {
+            createChart($("#chartCanvas")[0].getContext('2d'), "Port", analyisis["portDstFreq"])
+            break;
+        }
+        case "srcPort": {
+            createChart($("#chartCanvas")[0].getContext('2d'), "Port", analyisis["portFreq"])
+            break;
+        }
+    }
+}
 
 
 function changeWindow(newOption) {
@@ -136,7 +161,6 @@ function changeWindow(newOption) {
             break;
     }
 }
-
 
 function setDescription(id){
     var divDesc = $("#div-history-description");
@@ -180,4 +204,13 @@ function genHistory(){
             openHistoryFile(event.target.id);
         });
     });
+}
+
+function hideStatusInfo() {
+    $("#ipInfoStatusOutout").css("display", "gone");
+}
+
+function showStatusInfo(text) {
+    $("#ipInfoStatusOutout").text(text);
+    $("#ipInfoStatusOutout").css("display", "block");
 }

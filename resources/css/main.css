@@ -66,3 +66,57 @@ nav>span{
 	font-size:14px;
 	padding:6px;
 }
+
+.scroll-container {
+	margin: 24px;
+	height: 300px;
+	border: 1px solid #bebebe;
+	border-radius: 2px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.data-table {
+}
+
+.data-row {
+
+}
+
+.data-title {
+	font-weight: 500;
+	color: #3e3e3e;
+}
+
+.data-desc {
+	font-weight: 300;
+	color: #2e2e2e;
+}
+
+.stack-inline {
+	float: left;
+}
+
+.divider {
+	clear: both;
+}
+
+.center-block {
+	clear: both;
+	width: 100%;
+	margin: 32px auto 32px auto;
+	text-align: center;
+}
+
+.accented {
+	background: rgb(240, 243, 245);
+}
+
+.footer {
+	position: fixed;
+	bottom: 0;
+	margin: 0;
+	padding-top: 20px;
+	height: 80px;
+	width: 100%;
+}

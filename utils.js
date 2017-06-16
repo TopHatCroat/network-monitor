@@ -95,3 +95,117 @@ String.prototype.hashCode = function(){
     return hash;
 }
 
+
+function makePcapTable(pcapData) {
+    var result = "";
+    var counter = 1;
+
+    $.each(pcapData, function(key, data) {
+        result += "<tr onclick=\"onTableRowClicked(" + counter + ")\">"
+        result += "<td>" + counter++ + "</td>";
+        result += "<td>" + data.sourceIP + "</td>";
+        result += "<td>" + data.sourcePort + "</td>";
+        result += "<td>" + data.destinationIP + "</td>";
+        result += "<td>" + data.destinationPort + "</td>";
+        result += "</tr>"
+    });
+
+    return result;
+}
+
+function makeIpTable(data) {
+    var result = "";
+    var counter = 1;
+
+    $.each(data.values(), function(key, ip) {
+        result += "<tr onclick=\"onTableRowClicked(" + counter + ")\">"
+        result += "<td>" + counter++ + "</td>";
+        result += "<td>" + ip + "</td>";
+        result += "</tr>"
+    });
+
+    return result;
+}
+
+
+function onTableRowClicked(row) {
+    showStatusInfo("Loading...")
+    shodan.host(pcapData[row - 1].sourceIP, 'kpIpMqmM9dG3FdBj2QC2ks3cSK1KlRiW', searchOpts)
+        .then(function(res) {
+
+
+            var result = "";
+
+            result += "<tr class=\"data-row\">";
+            result += "<td class=\"data-title\">Organization</td>";
+            result += "<td class=\"data-title\">" + res.org + "</td>";
+            result += "</tr>";
+            result += "<tr class=\"data-row\">";
+            result += "<td class=\"data-title\">IP</td>";
+            result += "<td class=\"data-title\">" + res.ip_str + "</td>";
+            result += "</tr>";
+
+            if(res.os != null) {
+                result += "<tr class=\"data-row\">";
+                result += "<td class=\"data-title\">OS</td>";
+                result += "<td class=\"data-title\">" + res.os + "</td>";
+                result += "</tr>";
+            }
+
+            result += "<tr class=\"data-row\">";
+            result += "<td class=\"data-title\">Location</td>";
+            result += "<td class=\"data-title\">" /*+ res.city + ", "*/ + res.country_name + ", " + res.country_code + "</td>";
+            result += "</tr>";
+
+            result += "<tr class=\"data-row\">";
+            result += "<td class=\"data-title\">IPS</td>";
+            result += "<td class=\"data-title\">" + res.isp + "</td>";
+            result += "</tr>";
+
+            result += "<tr class=\"data-row\">";
+            result += "<td class=\"data-title\">Hostnames</td>";
+            result += "<td class=\"data-title\">";
+            $.each(res.hostnames, function(k2, host) {
+                result += host + "</br>";
+            });
+            result += "</td>";
+            result += "</tr>";
+
+            result += "<tr class=\"data-row\">";
+            result += "<td class=\"data-title\">Ports</td>";
+            result += "<td class=\"data-title\">";
+            $.each(res.ports, function(k2, port) {
+                result += port + "</br>";
+            });
+            result += "</td>";
+            result += "</tr>";
+
+            result += "<tr class=\"data-row\">";
+            result += "<td class=\"data-title\">Vulnerabilities</td>";
+            result += "<td class=\"data-desc\">";
+            $.each(res.vulns, function(k2, vuln) {
+                result += vuln.slice(1, vuln.length) + "<a target='_blank' href='https://www.cve.mitre.org/cgi-bin/cvename.cgi?name=" + vuln.slice(1, vuln.length) + "'><span class=\"icon icon-link\"></span></a>" + "</br>";
+            });
+            result += "</td>";
+            result += "</tr>";
+
+            hideStatusInfo();
+
+            var out = $("#shodanCallOutput");
+            out.empty();
+            out.append(result);
+
+
+            console.log('Result:');
+            console.log(res);
+            myConsole.log('Result:');
+            myConsole.log(res);
+        })
+        .catch(function(err) {
+            var out = $("#shodanCallOutput");
+            out.empty();
+            showStatusInfo("No data for IP")
+        });
+
+}
+
