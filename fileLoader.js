@@ -5,9 +5,7 @@
 function inspectFile(path){
     //check extension
 
-
     //open file
-
 
     //load content
 }
@@ -16,14 +14,12 @@ function inspectFile(path){
 function prepareFile(){
 	if (!fs.existsSync(fp)) {
 		fs.writeFile(fp, '[', (err) => {
-			if(err){
-				alert("An error ocurred creating the file "+ err.message)
-			}
-			
-			alert("The file has been succesfully saved");
+			myConsole.log("history file created");
 		});
 	}
 }
+
+let historyData = "h";
 
 function readHistory(){
 	prepareFile();
@@ -33,31 +29,37 @@ function readHistory(){
 			alert("An error ocurred reading the file :" + err.message);
 			return;
 		}
-		//myConsole.log(data);
-		//myConsole.log(data + "]");
-		data = data.slice(0, -1)+"]";
-		myConsole.log( "PARSE: "+$.parse(data + "]"));
-		data = parse(data + "]");
-		$.each( data, function( key, value ) {
-			alert( key + ": " + value );
-		});
-		
+		myConsole.log("readHistory()");
+		//if not empty
+		if(data!="["){
+			//remove last ,
+			data = data.slice(0, -1);
+        }
+		data += "]";
+		data = JSON.parse(data);
+        historyData = JSON.parse(JSON.stringify(data));
 	});
 }
-
-
 var fs = require('fs');
 var fp= 'resources/history/h.dat';
-function writeHistory(filepath, otherData){
+function writeHistory(filePath, fileSize, processingTime, securityProblems){
 	prepareFile();
-	var data = {filepath: filepath, som_other_data:otherData};
+	var id = ""+filePath+fileSize+processingTime+securityProblems+ new Date().toLocaleString();
+    id = id.hashCode();
+	if(historyData.length>40){
+
+	}
+	var date = new Date().toJSON().slice(0,10).replace(/-/g,'/');
+	var data = {id: id, filePath: filePath, fileSize:fileSize, processingTime: processingTime, securityProblems:securityProblems, date: date};
 	fs.appendFile(fp, JSON.stringify(data, null, 2)+",", (err) => {
 		if(err){
 			alert("An error ocurred creating the file "+ err.message)
 		}
-		
-		alert("The file has been succesfully saved");
+        historyData.push(data);
 	});
-	
-	
+
+
 }
+
+
+
