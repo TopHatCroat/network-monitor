@@ -5,11 +5,23 @@
 var shodan = require('shodan-client');
 var pcapp = require('pcap-parser');
 
+var currentWindow;
+var currentNavOption;
+
+
+
 var ipSet = new StringSet();
 
 const searchOpts = {};
 
 $(document).ready(function(){
+	//alert("text") - fora
+	currentWindow = $("#home-window");
+	currentNavOption = $("#home-nav-item");
+	$("#navigation>span").click(function (event) {
+		myConsole.log("kliknuo na :" + event.target.id);
+		changeWindow(event.target);
+	});
     myConsole.log("TEST");
     $("#inputFile").click(function(event){
         event.target.value=null;
@@ -48,6 +60,7 @@ $(document).ready(function(){
         });
 
     });
+	
 });
 
 function parsePcapData(buffer) {
@@ -83,4 +96,31 @@ function parsePcapData(buffer) {
         destinationPort: destinationPort,
         data: data
     }
+}
+
+function changeWindow(newOption) {
+	currentNavOption.toggleClass("active", false);
+	currentNavOption.toggleClass("main-active", false);
+	$(newOption).toggleClass("active", true);
+	$(newOption).toggleClass("main-active", true);
+	currentNavOption = $(newOption);
+	currentWindow.toggleClass("main-current-window", false);
+	currentWindow.toggleClass("main-hidden-window", true);
+	
+	
+	
+	switch (newOption.id) {
+		case "home-nav-item":
+			currentWindow = $("#home-window").toggleClass("main-current-window", true).toggleClass("main-hidden-window", false);
+			$("#header-h1").text("Home");
+			break;
+		case "analysis-nav-item":
+			currentWindow = $("#analysis-window").toggleClass("main-current-window", true).toggleClass("main-hidden-window", false);
+			$("#header-h1").text("Analysis");
+			break;
+		case "history-nav-item":
+			currentWindow = $("#history-window").toggleClass("main-current-window", true).toggleClass("main-hidden-window", false);
+			$("#header-h1").text("History");
+			break;
+	}
 }
