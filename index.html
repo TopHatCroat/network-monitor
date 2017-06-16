@@ -1,116 +1,158 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="UTF-8">
     <title>Network Monitor</title>
     <link rel="stylesheet" type="text/css" href="resources/css/main.css">
     <!--including photon from node_modules # sudo npp install photonkit --save     -->
     <link rel="stylesheet" href="node_modules/photonkit/dist/css/photon.css">
 
-    <script src=""></script>
-
     <script>
-      //including jquery from node_modules # sudo npp install jquery --save
-      window.$ = window.jQuery = require('jquery');
-      //accessing node modules from "rendering" code to create console that outputs on terminal
-      var nodeConsole = require('console');
-      var myConsole = new nodeConsole.Console(process.stdout, process.stderr);
-      myConsole.log('App started');
+        //including jquery from node_modules # sudo npp install jquery --save
+        window.$ = window.jQuery = require('jquery');
+        //accessing node modules from "rendering" code to create console that outputs on terminal
+        var nodeConsole = require('console');
+        var myConsole = new nodeConsole.Console(process.stdout, process.stderr);
+        console.log("dakle");
+        myConsole.log('App started');
     </script>
     <script src="fileLoader.js"></script>
     <script src="chart.js"></script>
     <script src="libs/chart.min.js"></script>
     <script src="utils.js"></script>
     <script src="main_client.js"></script>
-  </head>
-  <body>
+</head>
+<body>
+<div class="window">
     <header class="toolbar toolbar-header">
-      <h1 class="title">Header the tabs</h1>
+        <h1 id="header-h1" class="title">Home</h1>
     </header>
+    <div class="window-content">
+        <div class="pane-group">
+            <div class="pane-sm sidebar">
+                <nav id="navigation" class="nav-group main-nav-group">
+                    <h5 class="nav-group-title">Navigation</h5>
+                    <span id="home-nav-item" class="nav-group-item main-nav-padded active main-active ">
+                        <span class="icon icon-home"></span>
+                        Home
+                    </span>
+                    <span id="analysis-nav-item" class="nav-group-item main-nav-padded">
+                      <span class="icon icon-download"></span>
+                      Analysis
+                    </span>
+                    <span id="history-nav-item" class="nav-group-item main-nav-padded">
+                      <span class="icon icon-folder"></span>
+                      History
+                    </span>
+                </nav>
+            </div>
+            <div id="content" class="pane">
+                <div id="home-window" class="main-current-window main-window "><br>
+                    <h1 style="display:inline">Network Monitor</h1><span style="margin-left:20px;"
+                                                                         id="version">v0.1</span>
+                    <p>
+                        This is an application made for analyzing network data.<br>
+                        Its primary function is to determine security vulnerabilities of servers
+                        contained in .pcap files.
+                    </p>
+                    <p>
 
-    <div class="tab-group">
-      <div class="tab-item">
-        <span class="icon icon-cancel icon-close-tab"></span>
-        Tab
-      </div>
-      <div class="tab-item active">
-        <span class="icon icon-cancel icon-close-tab"></span>
-        TEST PHOTON
-      </div>
-      <div class="tab-item">
-        <span class="icon icon-cancel icon-close-tab"></span>
-        Tab
-      </div>
-      <div class="tab-item tab-item-fixed">
-        <span class="icon icon-plus"></span>
-      </div>
+                    </p>
+                    <p>
+
+                    </p>
+                </div>
+                <div id="analysis-window" class="main-window main-hidden-window">
+                    <h1>Analysis</h1>
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <button id="chechIpBtn">Check public IP</button>
+                            </td>
+                            <td id="checkIpOutput">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+
+                            </td>
+                            <td id="infoOutput">
+                                <div id="mainInfoOutput" style="display: none">You are browsing from <i
+                                        id="infoLocation"></i> and your ISP is <i id="infoIsp"></i></div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <input id="inputFile" value="Browse file" type="file"/>
+                            </td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td id="ipListOutput"></td>
+                            <td>
+                                <button id="loadIpListBtn">Load</button>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <button id="analyzePcapBtn">Analyize data</button>
+
+                            </td>
+                            <td>
+                                <canvas id="chartCanvas" style="display: block; width: 400px; height: 300px;"
+                                        width="400" height="300"></canvas>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <button id="shodanBtn">Shodan</button>
+                            </td>
+                            <td>
+                                <textarea id="shodanOutput"></textarea>
+                            </td>
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+                    <div id="history-window" class="main-window main-hidden-window">
+                        <div style="margin-left:20px" class="pane-group">
+                            <div id="div-history-container" class="pane"><h1>History</h1>
+                                <div id="div-history" style="width:300px">
+                                    <div class="history-item">27.01.2017 | some_file.pcap</div>
+                                    <div class="history-item">13.12.2018 | some_file2.pcap</div>
+                                    NA HOVER EVENT NAPRAVITI:
+                                    sa desne strane dodat djelić window-a, kada se hoveruje onda se dohvaćaju podaci
+                                    tog elementa i sa desne strane se ispisuju (velicina fajla, putanja do njega,
+                                    neki rezultat analize, trajanje analize itd.)
+                                </div>
+                            </div>
+                            <div class="pane-sm sidebar main-description-sidebar">
+                                <span style="font-size:20px">Description</span>
+                                <div id="div-history-description"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  <h1>Network Monitor</h1>
-  <h2>Welcome!</h2>
-  <p>
-    This is an application made for analyzing network data.
-  </p>
+    <footer class="toolbar toolbar-footer">
+        <span style="float:left; margin-left:10px;">Made by Martinović Antonio & Čivčija Tomislav</span>
+        <span style="float:right;	margin-right:10px;">Internet Security</span>
+    </footer>
+</div>
+</body>
 
-    <table>
-      <tbody>
-        <tr>
-          <td>
-            <button id="chechIpBtn">Check public IP</button>
-          </td>
-          <td id="checkIpOutput">
-
-          </td>
-        </tr>
-        <tr>
-          <td>
-
-          </td>
-          <td id="infoOutput">
-            <div id="mainInfoOutput" style="display: none">You are browsing from <i id="infoLocation"></i> and your ISP is <i id="infoIsp"></i></div>
-          </td>
-        </tr>
-
-        <tr>
-          <td>
-            <input id="inputFile" value="Browse file" type="file"/>
-          </td>
-          <td></td>
-        </tr>
-
-        <tr>
-          <td id="ipListOutput"></td>
-          <td>
-            <button id="loadIpListBtn" >Load</button>
-          </td>
-        </tr>
-
-        <tr>
-          <td>
-            <button id="analyzePcapBtn">Analyize data</button>
-
-          </td>
-          <td>
-            <canvas id="chartCanvas" style="display: block; width: 400px; height: 300px;" width="400" height="300"></canvas>
-          </td>
-        </tr>
-
-        <tr>
-          <td>
-            <button id="shodanBtn" >Shodan</button>
-          </td>
-          <td>
-            <textarea id="shodanOutput" ></textarea>
-          </td>
-        </tr>
-
-      </tbody>
-
-    </table>
-
-  </body>
-
-  <script>
+<script>
     // You can also require other files to run in this process
     require('./renderer.js')
-  </script>
+</script>
 </html>

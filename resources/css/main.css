@@ -1,6 +1,68 @@
+.main-nav-padded{
+	margin-top:6px;
+	margin-bottom:6px;
+	margin-left:-10px;
+}
+
+.main-nav-group{
+	margin-top:50px;
+}
+
+.main-current-window{
+	display:inherit;
+}
+
+.main-hidden-window{
+	display:none;
+}
+
+.main-window{
+	padding-left:20px;
+}
+
+#content div{
+
+}
+
+#content{
+
+}
+
+nav>span{
+	font-size:16px;
+	font-weight:600;
+}
 
 
+.main-active{
+	color:darkslateblue;
+}
+
+.history-content{
+
+}
+
+.history-item{
+	font-size:14px;
+	
+}
 
 
+.history-item:hover{
+	background-color:slateblue;
+	color:white;
+	cursor:pointer;
+}
 
 
+.main-description-sidebar{
+	width:300px;
+}
+
+
+#div-history-description{
+
+	overflow:hidden;
+	font-size:14px;
+	padding:6px;
+}
