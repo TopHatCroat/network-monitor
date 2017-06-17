@@ -41,7 +41,7 @@ function readHistory(){
 	});
 }
 var fs = require('fs');
-var fp= 'data/h.dat';
+var fp= 'resources/app/data/h.dat';
 
 function writeHistory(filePath, fileSize, processingTime, securityProblems){
 	prepareFile();
