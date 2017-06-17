@@ -46,6 +46,65 @@ function loadIpInfo() {
     });
 }
 
+//loadData logic
+function loadData(fromHistory){
+    if(!fromHistory)
+        var startTime = (new Date()).getMilliseconds();
+
+    var parser = pcapp.parse(selectedFile.path);
+    pcapData = [];
+    ipSet = new StringSet();
+
+    parser.on('packet', function(packet) {
+        var data = parsePcapData(packet.data);
+        if(data != null) {
+            ipSet.add(data.sourceIP);
+            ipSet.add(data.destinationIP);
+            pcapData.push(data)
+        }
+    });
+
+    parser.on('end', function (end) {
+        var out = $("#ipListOutput");
+        out.empty();
+        ipSet.remove("0.0.0.0");
+        ipSet.remove("255.255.255.255");
+        out.append(makeIpTable(ipSet));
+
+        var ipFrequency = [];
+        var portFrequency = [];
+        var ipDstFrequency = [];
+        var portDstFrequency = [];
+
+        analyisis = {};
+
+        $.each(pcapData, function(key, val) {
+            upTick(ipFrequency, val.sourceIP);
+            upTick(ipDstFrequency, val.destinationIP);
+            upTick(portFrequency, val.sourcePort);
+            upTick(portDstFrequency, val.destinationPort);
+        });
+
+        analyisis["ipFreq"] = sortTuple(ipFrequency);
+        analyisis["ipDstFreq"] = sortTuple(ipDstFrequency);
+        analyisis["portFreq"] = sortTuple(portFrequency)
+        analyisis["portDstFreq"] = sortTuple(portDstFrequency);
+        if(!fromHistory)
+            writeHistory(
+                selectedFile.path,
+                selectedFile.size,
+                (new Date()).getMilliseconds() - startTime,
+                pcapData.length
+            );
+    });
+
+}
+
+function viewFromHistory(path){
+    selectedFile = {path:path, size:0};
+    loadData(true);
+}
+
 $(document).ready(function(){
 
     readHistory();
@@ -85,54 +144,7 @@ $(document).ready(function(){
     });
 
     $("#loadIpListBtn").click(function(event){
-        var startTime = (new Date()).getMilliseconds();
-
-        var parser = pcapp.parse(selectedFile.path);
-        pcapData = [];
-        ipSet = new StringSet();
-
-        parser.on('packet', function(packet) {
-            var data = parsePcapData(packet.data);
-            if(data != null) {
-                ipSet.add(data.sourceIP);
-                ipSet.add(data.destinationIP);
-                pcapData.push(data)
-            }
-        });
-
-        parser.on('end', function (end) {
-            var out = $("#ipListOutput");
-            out.empty();
-            ipSet.remove("0.0.0.0");
-            ipSet.remove("255.255.255.255");
-            out.append(makeIpTable(ipSet));
-
-            var ipFrequency = [];
-            var portFrequency = [];
-            var ipDstFrequency = [];
-            var portDstFrequency = [];
-
-            analyisis = {};
-
-            $.each(pcapData, function(key, val) {
-                upTick(ipFrequency, val.sourceIP);
-                upTick(ipDstFrequency, val.destinationIP);
-                upTick(portFrequency, val.sourcePort);
-                upTick(portDstFrequency, val.destinationPort);
-            });
-
-            analyisis["ipFreq"] = sortTuple(ipFrequency);
-            analyisis["ipDstFreq"] = sortTuple(ipDstFrequency);
-            analyisis["portFreq"] = sortTuple(portFrequency)
-            analyisis["portDstFreq"] = sortTuple(portDstFrequency);
-
-            writeHistory(
-                selectedFile.path,
-                selectedFile.size,
-                (new Date()).getMilliseconds() - startTime,
-                pcapData
-            );
-        });
+        loadData(false);
     });
 });
 
@@ -209,7 +221,7 @@ function openHistoryFile(id){
             return false;
         }
     });
-    inputFileChangeHandler(filePath);
+    viewFromHistory(filePath);
     changeWindow($("#analysis-nav-item"));
 }
 
