@@ -2,6 +2,7 @@
  * Created by antonio on 15/06/17.
  */
 
+var chart;
 
 function genChartData(title, arr) {
     var keys = [];
@@ -25,7 +26,11 @@ function genChartData(title, arr) {
 }
 
 function createChart(ctx, title, arr) {
-    return new Chart(ctx, {
+    if(chart != undefined) {
+        chart.destroy()
+    }
+
+    this.chart = new Chart(ctx, {
         type: 'bar',
         data: genChartData(title, arr),
         options: {
@@ -40,4 +45,6 @@ function createChart(ctx, title, arr) {
             // }
         }
     });
+
+    return chart;
 }

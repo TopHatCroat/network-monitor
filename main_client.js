@@ -12,6 +12,7 @@ var selectedFile = "";
 var ipSet = new StringSet();
 var pcapData = [];
 var analyisis = {};
+var chart;
 
 const searchOpts = {};
 
@@ -89,6 +90,9 @@ function loadData(fromHistory){
         analyisis["ipDstFreq"] = sortTuple(ipDstFrequency);
         analyisis["portFreq"] = sortTuple(portFrequency)
         analyisis["portDstFreq"] = sortTuple(portDstFrequency);
+
+        chart = createChart($("#chartCanvas")[0].getContext('2d'), "Destination IP Count", analyisis["ipDstFreq"]);
+
         if(!fromHistory)
             writeHistory(
                 selectedFile.path,
@@ -106,6 +110,13 @@ function viewFromHistory(path){
 }
 
 $(document).ready(function(){
+
+    var shell = require('electron').shell;
+    //open links externally by default
+    $(document).on('click', 'a[href^="http"]', function(event) {
+        event.preventDefault();
+        shell.openExternal(this.href);
+    });
 
     readHistory();
 
@@ -152,19 +163,19 @@ function generateChartOutput(type) {
     $("#chartCanvas").empty();
     switch(type) {
         case "destIp": {
-            createChart($("#chartCanvas")[0].getContext('2d'), "IP", analyisis["ipDstFreq"])
+            chart = createChart($("#chartCanvas")[0].getContext('2d'), "Destination IP Count", analyisis["ipDstFreq"])
             break;
         }
         case "srcIp": {
-            createChart($("#chartCanvas")[0].getContext('2d'), "IP", analyisis["ipFreq"])
+            chart = createChart($("#chartCanvas")[0].getContext('2d'),  "Source IP Count", analyisis["ipFreq"])
             break;
         }
         case "destPort": {
-            createChart($("#chartCanvas")[0].getContext('2d'), "Port", analyisis["portDstFreq"])
+            chart = createChart($("#chartCanvas")[0].getContext('2d'), "Destination Port Count", analyisis["portDstFreq"])
             break;
         }
         case "srcPort": {
-            createChart($("#chartCanvas")[0].getContext('2d'), "Port", analyisis["portFreq"])
+            chart = createChart($("#chartCanvas")[0].getContext('2d'), "Source Port Count", analyisis["portFreq"])
             break;
         }
     }
