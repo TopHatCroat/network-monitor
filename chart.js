@@ -4,14 +4,22 @@
 
 
 function genChartData(title, arr) {
+    var keys = [];
+    var data = [];
+
+    for(var i = 0; i < arr.length; i++) {
+        keys.push(arr[i][0]);
+        data.push(arr[i][1]);
+    }
+
     return {
-        labels: Object.keys(arr),
+        labels: keys,
         datasets: [{
             label: title,
             backgroundColor: "#DDEEDD",
             borderColor: "#77778A",
             borderWidth: 1,
-            data: Object.values(arr)
+            data: data
         }]
     }
 }

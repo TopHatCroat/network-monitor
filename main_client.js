@@ -7,6 +7,7 @@ var pcapp = require('pcap-parser');
 
 var currentWindow;
 var currentNavOption;
+var selectedFile = "";
 
 var ipSet = new StringSet();
 var pcapData = [];
@@ -16,8 +17,10 @@ const searchOpts = {};
 
 function inputFileChangeHandler(path){
     var parser = pcapp.parse(path);
+    pcapData = [];
+    ipSet = new StringSet();
+
     parser.on('packet', function(packet) {
-        // do your packet processing
         var data = parsePcapData(packet.data);
         if(data != null) {
             ipSet.add(data.sourceIP);
@@ -45,9 +48,9 @@ function loadIpInfo() {
 
 $(document).ready(function(){
 
-    // readHistory();
+    readHistory();
 
-    // loadIpInfo();
+    loadIpInfo();
 
     $("#div-history").mouseleave(function(event){
         $("#div-history-description").empty();
@@ -64,56 +67,77 @@ $(document).ready(function(){
     $("#inputFile").click(function(event){
         event.target.value=null;
     }).change(function(event){
-        inputFileChangeHandler(event.target.files[0].path);
+        selectedFile = event.target.files[0];
         myConsole.log(event.target.files[0].path);
     });
 
     $("#sourceIpGraphBtn").click(function(event) {
-        $("chartCanvas").empty();
         generateChartOutput("srcIp");
     });
     $("#destinationIpGraphBtn").click(function(event) {
-        $("chartCanvas").empty();
         generateChartOutput("destIp");
     });
     $("#sourcePortGraphBtn").click(function(event) {
-        $("chartCanvas").empty();
         generateChartOutput("srcPort");
     });
     $("#destinationPortGraphBtn").click(function(event) {
-        $("chartCanvas").empty();
         generateChartOutput("destPort");
     });
 
     $("#loadIpListBtn").click(function(event){
-        var out = $("#ipListOutput");
-        out.empty();
-        ipSet.remove("0.0.0.0");
-        ipSet.remove("255.255.255.255");
-        out.append(makeIpTable(ipSet))
+        var startTime = (new Date()).getMilliseconds();
+
+        var parser = pcapp.parse(selectedFile.path);
+        pcapData = [];
+        ipSet = new StringSet();
+
+        parser.on('packet', function(packet) {
+            var data = parsePcapData(packet.data);
+            if(data != null) {
+                ipSet.add(data.sourceIP);
+                ipSet.add(data.destinationIP);
+                pcapData.push(data)
+            }
+        });
+
+        parser.on('end', function (end) {
+            var out = $("#ipListOutput");
+            out.empty();
+            ipSet.remove("0.0.0.0");
+            ipSet.remove("255.255.255.255");
+            out.append(makeIpTable(ipSet));
+
+            var ipFrequency = [];
+            var portFrequency = [];
+            var ipDstFrequency = [];
+            var portDstFrequency = [];
+
+            analyisis = {};
+
+            $.each(pcapData, function(key, val) {
+                upTick(ipFrequency, val.sourceIP);
+                upTick(ipDstFrequency, val.destinationIP);
+                upTick(portFrequency, val.sourcePort);
+                upTick(portDstFrequency, val.destinationPort);
+            });
+
+            analyisis["ipFreq"] = sortTuple(ipFrequency);
+            analyisis["ipDstFreq"] = sortTuple(ipDstFrequency);
+            analyisis["portFreq"] = sortTuple(portFrequency)
+            analyisis["portDstFreq"] = sortTuple(portDstFrequency);
+
+            writeHistory(
+                selectedFile.path,
+                selectedFile.size,
+                (new Date()).getMilliseconds() - startTime,
+                pcapData
+            );
+        });
     });
 });
 
 function generateChartOutput(type) {
-    var ipFrequency = [];
-    var portFrequency = [];
-    var ipDstFrequency = [];
-    var portDstFrequency = [];
-
-    analyisis = {};
-
-    $.each(pcapData, function(key, val) {
-        upTick(ipFrequency, val.sourceIP);
-        upTick(ipDstFrequency, val.destinationIP);
-        upTick(portFrequency, val.sourcePort);
-        upTick(portDstFrequency, val.destinationPort);
-    });
-
-    analyisis["ipFreq"] = ipFrequency;
-    analyisis["ipDstFreq"] = ipDstFrequency;
-    analyisis["portFreq"] = portFrequency;
-    analyisis["portDstFreq"] = portDstFrequency;
-
+    $("#chartCanvas").empty();
     switch(type) {
         case "destIp": {
             createChart($("#chartCanvas")[0].getContext('2d'), "IP", analyisis["ipDstFreq"])
@@ -207,6 +231,7 @@ function genHistory(){
 }
 
 function hideStatusInfo() {
+    $("#ipInfoStatusOutout").text("");
     $("#ipInfoStatusOutout").css("display", "gone");
 }
 

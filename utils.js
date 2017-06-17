@@ -41,6 +41,10 @@ function makeHtmlList(array) {
 }
 
 function upTick(array, key) {
+    if(!isNaN(key)) {
+        key = key.toString();
+    }
+
     var count = array[key];
     if(count != undefined) {
         array[key] = count + 1;
@@ -80,7 +84,7 @@ function parsePcapData(buffer) {
         destinationIP: destinationIP,
         sourcePort: sourcePort,
         destinationPort: destinationPort,
-        data: data
+        // data: data
     }
 }
 
@@ -206,6 +210,25 @@ function onTableRowClicked(row) {
             out.empty();
             showStatusInfo("No data for IP")
         });
+}
 
+function sortTuple(arr) {
+    var tuples = [];
+
+    for (var key in arr) tuples.push([key, arr[key]]);
+
+    tuples.sort(function(a, b) {
+        a = a[1];
+        b = b[1];
+
+        return a < b ? 1 : (a > b ? -1 : 0);
+    });
+    //
+    // for (var i = 0; i < tuples.length; i++) {
+    //     var key = tuples[i][0];
+    //     var value = tuples[i][1];
+    // }
+
+    return tuples;
 }
 

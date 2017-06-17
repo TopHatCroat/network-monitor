@@ -17,7 +17,6 @@
         myConsole.log('App started');
     </script>
     <script src="fileLoader.js"></script>
-    <script src="ui_helpers.js.js"></script>
     <script src="chart.js"></script>
     <script src="libs/chart.min.js"></script>
     <script src="utils.js"></script>
@@ -60,14 +59,20 @@
 
                     </p>
 
-                    <h3 id="checkIpOutput" class="text-center">
+                    <div class="center-block">
+                        <h4 class="text-center">
+                            Your public IP is
+                        </h4>
+                        <h3 id="checkIpOutput" class="text-center">
 
-                    </h3>
+                        </h3>
 
-                    <h4 id="infoOutput" class="text-center">
-                        <div id="mainInfoOutput" style="display: none">You are browsing from <i
-                                id="infoLocation"></i> and your ISP is <i id="infoIsp"></i></div>
-                    </h4>
+                        <p id="infoOutput" class="text-center" style="font-size: 12em; text-align: center; margin:auto; max-width: 300px">
+                            <div id="mainInfoOutput" style="display: none; text-align: center; margin:auto; max-width: 300px">You are browsing from <i
+                                    id="infoLocation"></i> and your ISP is <i id="infoIsp"></i></div>
+                        </p>
+                    </div>
+
 
                 </div>
                 <div id="analysis-window" class="main-window main-hidden-window">
